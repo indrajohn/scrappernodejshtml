@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/*.js", "use": "@vercel/node" }
+  ],
+  "functions": {
+    "api/getHtml.js": {
+      "memory": 300,
+      "maxDuration": 10
+    }
+  }
+}
