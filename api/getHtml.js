@@ -12,25 +12,41 @@ module.exports = async (req, res) => {
 
   try {
     console.log(`Fetching URL: ${url}`);
+    console.time('Total time');
 
-    // Launch the browser using @sparticuz/chromium
+    console.time('Browser launch');
     browser = await puppeteer.launch({
       args: chromium.args,
       executablePath: await chromium.executablePath(),
       headless: chromium.headless,
       defaultViewport: chromium.defaultViewport,
     });
+    console.timeEnd('Browser launch');
 
+    console.time('Page load');
     const page = await browser.newPage();
-    await page.goto(url, {
-      waitUntil: 'networkidle0',
-      timeout: 30000, // Optional: Increase timeout if necessary
+
+    // Block unnecessary resources to speed up load time
+    await page.setRequestInterception(true);
+    page.on('request', (req) => {
+      if (['image', 'stylesheet', 'font', 'media'].includes(req.resourceType())) {
+        req.abort();
+      } else {
+        req.continue();
+      }
     });
 
-    console.log('Page loaded successfully');
+    await page.goto(url, {
+      waitUntil: 'networkidle0', 
+      timeout: 60000, 
+    });
 
+    console.timeEnd('Page load');
+
+    console.time('Content retrieval');
     const html = await page.content();
-    console.log('HTML content retrieved');
+    console.timeEnd('Content retrieval');
+    console.timeEnd('Total time');
 
     res.setHeader('Content-Type', 'text/html');
     res.status(200).send(html);
