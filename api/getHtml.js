@@ -1,4 +1,5 @@
-const puppeteer = require('puppeteer');
+const chromium = require('chrome-aws-lambda');
+const puppeteer = require('puppeteer-core');
 
 module.exports = async (req, res) => {
   const url = req.query.url;
@@ -7,28 +8,38 @@ module.exports = async (req, res) => {
     return res.status(400).send('URL is required');
   }
 
+  let browser = null;
+
   try {
     console.log(`Fetching URL: ${url}`);
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+
+    // Launch the browser using chrome-aws-lambda
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath,
+      headless: chromium.headless,
+      defaultViewport: chromium.defaultViewport,
     });
+
     const page = await browser.newPage();
     await page.goto(url, {
       waitUntil: 'networkidle0',
-      timeout: 30000, // Optional: Increase timeout
+      timeout: 30000, // Optional: Increase timeout if necessary
     });
+
     console.log('Page loaded successfully');
 
     const html = await page.content();
     console.log('HTML content retrieved');
-
-    await browser.close();
 
     res.setHeader('Content-Type', 'text/html');
     res.status(200).send(html);
   } catch (error) {
     console.error('Error fetching page:', error);
     res.status(500).send('Error fetching page content');
+  } finally {
+    if (browser !== null) {
+      await browser.close();
+    }
   }
 };
