@@ -1,5 +1,5 @@
+const chromium = require('@sparticuz/chromium');
 const puppeteer = require('puppeteer-core');
-const chromium = require('chrome-aws-lambda');
 
 module.exports = async (req, res) => {
   const url = req.query.url;
@@ -13,11 +13,11 @@ module.exports = async (req, res) => {
   try {
     console.log(`Fetching URL: ${url}`);
 
-    // Launch the browser using chrome-aws-lambda
+    // Launch the browser using @sparticuz/chromium
     browser = await puppeteer.launch({
       args: chromium.args,
-      executablePath: await chromium.executablePath,
-      headless: true,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
       defaultViewport: chromium.defaultViewport,
     });
 

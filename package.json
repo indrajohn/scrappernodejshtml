@@ -10,9 +10,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "chrome-aws-lambda": "^10.1.0",
+    "@sparticuz/chromium": "^127.0.0",
     "playwright-aws-lambda": "^0.11.0",
     "playwright-core": "^1.46.1",
-    "puppeteer-core": "^10.1.0"
+    "puppeteer-core": "^23.1.0"
   }
 }
