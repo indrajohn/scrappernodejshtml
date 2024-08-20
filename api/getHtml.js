@@ -1,3 +1,5 @@
+const puppeteer = require('puppeteer');
+
 module.exports = async (req, res) => {
   const url = req.query.url;
 
