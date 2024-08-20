@@ -2,7 +2,7 @@
   "version": 2,
   "functions": {
     "api/getHtml.js": {
-      "memory": 1024,  // Increase the memory to 1024 MB
+      "memory": 1024,
       "maxDuration": 10
     }
   }
